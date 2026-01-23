@@ -1,22 +1,35 @@
 import type { Env } from './types';
+import * as cache from './cache';
 
 const TOKEN_CACHE_KEY = 'apple_music_token';
 const TOKEN_TTL_SECONDS = 3600; // 1 hour
 
-export async function getToken(env: Env): Promise<string> {
-  // Check KV cache first
-  const cached = await env.CACHE.get(TOKEN_CACHE_KEY);
-  if (cached) {
-    return cached;
+// Overloaded function: works with or without Env (for Railway vs Cloudflare)
+export async function getToken(env?: Env): Promise<string> {
+  // Check cache first (use in-memory for Railway, KV for Cloudflare)
+  if (env?.CACHE) {
+    const cached = await env.CACHE.get(TOKEN_CACHE_KEY);
+    if (cached) {
+      return cached;
+    }
+  } else {
+    const cached = cache.get(TOKEN_CACHE_KEY);
+    if (cached) {
+      return cached;
+    }
   }
 
   // Fetch token from Apple Music
   const token = await scrapeToken();
 
   // Cache the token
-  await env.CACHE.put(TOKEN_CACHE_KEY, token, {
-    expirationTtl: TOKEN_TTL_SECONDS,
-  });
+  if (env?.CACHE) {
+    await env.CACHE.put(TOKEN_CACHE_KEY, token, {
+      expirationTtl: TOKEN_TTL_SECONDS,
+    });
+  } else {
+    cache.set(TOKEN_CACHE_KEY, token, TOKEN_TTL_SECONDS);
+  }
 
   return token;
 }
@@ -74,6 +87,10 @@ async function scrapeToken(): Promise<string> {
   throw new Error('Could not extract JWT token from JS bundle');
 }
 
-export async function invalidateToken(env: Env): Promise<void> {
-  await env.CACHE.delete(TOKEN_CACHE_KEY);
+export async function invalidateToken(env?: Env): Promise<void> {
+  if (env?.CACHE) {
+    await env.CACHE.delete(TOKEN_CACHE_KEY);
+  } else {
+    cache.del(TOKEN_CACHE_KEY);
+  }
 }
