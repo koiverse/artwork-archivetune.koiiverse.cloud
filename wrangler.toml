@@ -1,0 +1,8 @@
+name = "artwork-boidu-dev"
+main = "src/index.ts"
+compatibility_date = "2026-01-01"
+
+[[kv_namespaces]]
+binding = "CACHE"
+id = "3e036f67c12c46afa2c5bfb1cecc4dd8"
+preview_id = "6232932e2193454992f566de00e475e4"
