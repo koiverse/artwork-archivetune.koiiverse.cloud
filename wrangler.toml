@@ -1,11 +1,11 @@
-name = "artwork-boidu-dev"
+name = "artwork-archivetune.koiiverse.cloud"
 main = "src/index.ts"
 compatibility_date = "2026-01-01"
 
 [[kv_namespaces]]
 binding = "CACHE"
-id = "3e036f67c12c46afa2c5bfb1cecc4dd8"
-preview_id = "6232932e2193454992f566de00e475e4"
+id = "6a7339b7c87c47e493a561f7cc68caa0"
+preview_id = "1273e9570f48400a8847c10a3e28bbf8"
 
 [observability]
 [observability.logs]
