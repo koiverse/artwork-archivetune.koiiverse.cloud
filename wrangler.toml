@@ -1,4 +1,4 @@
-name = "artwork-archivetune.koiiverse.cloud"
+name = "artwork-archivetune"
 main = "src/index.ts"
 compatibility_date = "2026-01-01"
 
